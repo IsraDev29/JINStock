@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: jinstock-postgres-test
+    environment:
+      POSTGRES_USER: jinstock_test
+      POSTGRES_PASSWORD: test_password_123
+      POSTGRES_DB: jinstock_test_db
+    ports:
+      - '5433:5432'
+    volumes:
+      - pgtestdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U jinstock_test -d jinstock_test_db']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgtestdata:
