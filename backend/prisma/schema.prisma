@@ -1,0 +1,188 @@
+// Prisma schema for JINStock (Librería / Papelería OS)
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Rol {
+  ADMINISTRADOR
+  CAJERO
+}
+
+enum EstadoCompra {
+  PENDIENTE
+  CONFIRMADA
+  CANCELADA
+}
+
+enum EstadoVenta {
+  COMPLETADA
+  ANULADA
+}
+
+enum TipoMovimiento {
+  ENTRADA
+  SALIDA
+  AJUSTE
+}
+
+model Usuario {
+  id           String   @id @default(uuid())
+  nombre       String
+  email        String   @unique
+  passwordHash String
+  rol          Rol      @default(CAJERO)
+  estado       Boolean  @default(true)
+  verificado   Boolean  @default(false)
+  codigoConfirmacion String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  compras     Compra[]
+  ventas      Venta[]
+  movimientos MovimientoInventario[]
+}
+
+model Categoria {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  descripcion String?
+  estado      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  productos Producto[]
+}
+
+model Producto {
+  id           String   @id @default(uuid())
+  codigoBarras String?  @unique
+  sku          String?  @unique
+  nombre       String
+  descripcion  String?
+  imagenUrl    String?
+  categoriaId  String
+  categoria    Categoria @relation(fields: [categoriaId], references: [id])
+  precioVenta  Float
+  costo        Float
+  stock        Int      @default(0)
+  stockMinimo  Int      @default(5)
+  unidadMedida String   @default("unidad")
+  estado       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  detallesCompra DetalleCompra[]
+  detallesVenta  DetalleVenta[]
+  movimientos    MovimientoInventario[]
+
+  @@index([categoriaId])
+  @@index([estado])
+  @@index([nombre])
+}
+
+model Proveedor {
+  id        String   @id @default(uuid())
+  nombre    String
+  ruc       String?
+  telefono  String?
+  email     String?
+  direccion String?
+  estado    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  compras Compra[]
+}
+
+model Compra {
+  id            String       @id @default(uuid())
+  numeroFactura String?
+  proveedorId   String
+  proveedor     Proveedor    @relation(fields: [proveedorId], references: [id])
+  usuarioId     String
+  usuario       Usuario      @relation(fields: [usuarioId], references: [id])
+  fecha         DateTime     @default(now())
+  total         Float
+  estado        EstadoCompra @default(CONFIRMADA)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  detalles DetalleCompra[]
+
+  @@index([fecha])
+  @@index([usuarioId])
+  @@index([proveedorId])
+}
+
+model DetalleCompra {
+  id            String   @id @default(uuid())
+  compraId      String
+  compra        Compra   @relation(fields: [compraId], references: [id], onDelete: Cascade)
+  productoId    String
+  producto      Producto @relation(fields: [productoId], references: [id])
+  cantidad      Int
+  costoUnitario Float
+  subtotal      Float
+}
+
+model Venta {
+  id                String      @id @default(uuid())
+  numeroComprobante String      @unique
+  usuarioId         String
+  usuario           Usuario     @relation(fields: [usuarioId], references: [id])
+  fecha             DateTime    @default(now())
+  total             Float
+  metodoPago        String      @default("EFECTIVO")
+  montoPagadoNIO    Float?
+  montoPagadoUSD    Float?
+  cambioNIO         Float?
+  estado            EstadoVenta @default(COMPLETADA)
+  offlineId         String?     @unique
+  synced            Boolean     @default(true)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  detalles DetalleVenta[]
+
+  @@index([fecha])
+  @@index([usuarioId])
+  @@index([estado])
+}
+
+model DetalleVenta {
+  id             String   @id @default(uuid())
+  ventaId        String
+  venta          Venta    @relation(fields: [ventaId], references: [id], onDelete: Cascade)
+  productoId     String
+  producto       Producto @relation(fields: [productoId], references: [id])
+  cantidad       Int
+  precioUnitario Float
+  subtotal       Float
+}
+
+model MovimientoInventario {
+  id            String         @id @default(uuid())
+  productoId    String
+  producto      Producto       @relation(fields: [productoId], references: [id])
+  usuarioId     String
+  usuario       Usuario        @relation(fields: [usuarioId], references: [id])
+  tipo          TipoMovimiento
+  cantidad      Int
+  stockAnterior Int
+  stockNuevo    Int
+  motivo        String
+  referenciaId  String?
+  fecha         DateTime       @default(now())
+
+  @@index([productoId])
+  @@index([usuarioId])
+  @@index([fecha])
+}

@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const sale_controller_1 = require("../controllers/sale.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const validate_middleware_1 = require("../middlewares/validate.middleware");
+const schemas_1 = require("../validators/schemas");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_1.authenticateToken);
+router.get('/stats', sale_controller_1.getDashboardStats);
+router.post('/', (0, validate_middleware_1.validate)(schemas_1.createSaleSchema), sale_controller_1.createSale);
+router.get('/', (0, validate_middleware_1.validateQuery)(schemas_1.dateRangeFilterSchema), sale_controller_1.getSales);
+router.patch('/:id/anular', (0, auth_middleware_1.requireRole)(['ADMINISTRADOR']), (0, validate_middleware_1.validate)(schemas_1.anularSaleSchema), sale_controller_1.anularSale);
+exports.default = router;

@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const product_controller_1 = require("../controllers/product.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const validate_middleware_1 = require("../middlewares/validate.middleware");
+const schemas_1 = require("../validators/schemas");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_1.authenticateToken);
+router.get('/', (0, validate_middleware_1.validateQuery)(schemas_1.productListQuerySchema), product_controller_1.getProducts);
+router.get('/movements', product_controller_1.getInventoryMovements);
+router.get('/:id', product_controller_1.getProductById);
+router.post('/', (0, auth_middleware_1.requireRole)(['ADMINISTRADOR']), (0, validate_middleware_1.validate)(schemas_1.createProductSchema), product_controller_1.createProduct);
+router.put('/:id', (0, auth_middleware_1.requireRole)(['ADMINISTRADOR']), (0, validate_middleware_1.validate)(schemas_1.updateProductSchema), product_controller_1.updateProduct);
+router.patch('/:id/status', (0, auth_middleware_1.requireRole)(['ADMINISTRADOR']), product_controller_1.toggleProductStatus);
+router.delete('/:id', (0, auth_middleware_1.requireRole)(['ADMINISTRADOR']), product_controller_1.deleteProduct);
+router.post('/adjust', (0, auth_middleware_1.requireRole)(['ADMINISTRADOR']), (0, validate_middleware_1.validate)(schemas_1.inventoryAdjustmentSchema), product_controller_1.adjustProductStock);
+exports.default = router;
