@@ -1,0 +1,664 @@
+/* ==========================================================
+   JINStock · landing v2
+   Reglas de color:
+   - plum    → superficies, gradientes, botones (NUNCA texto sobre fondo oscuro)
+   - lavender→ texto de acento sobre oscuro
+   - sky     → datos y números
+   - coral   → alertas / "para quién"
+   - sun     → solo la acción principal (CTA) y el badge "Recomendado"
+   ========================================================== */
+
+   .landing-root {
+    --plum: #4a148c;
+    --plum-600: #5b1fa8;
+    --lavender: #a788f4;
+    --sky: #5f8fff;
+    --coral: #ff6b6b;
+    --sun: #fddb35;
+  
+    --paper: #111111;
+    --card: #19171e;
+    --ink: #f8f7fc;          /* texto principal */
+    --text-2: #cfc9db;       /* texto de apoyo fuerte  (≈ 11:1 sobre #111) */
+    --muted: #b0a9bf;        /* texto secundario        (≈ 8:1) */
+    --line: rgba(167, 136, 244, 0.16);
+    --accent-text: var(--lavender);
+  
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    color: var(--ink);
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E"),
+      var(--paper);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  .landing-root::before,
+  .landing-root::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  .landing-root::before {
+    top: 90px;
+    right: -160px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(167, 136, 244, 0.2) 0%, rgba(74, 20, 140, 0.12) 40%, transparent 72%);
+    filter: blur(35px);
+    animation: ui-glow-flow 32s ease-in-out infinite alternate;
+  }
+  
+  .landing-root::after {
+    left: -180px;
+    top: 48%;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, rgba(255, 107, 107, 0.12) 0%, rgba(167, 136, 244, 0.1) 42%, transparent 72%);
+    filter: blur(45px);
+    animation: ui-glow-flow 40s ease-in-out -17s infinite alternate-reverse;
+  }
+  
+  .landing-root > *:not(.landing-nav):not(.landing-skip) {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .landing-root * { box-sizing: border-box; }
+  .landing-root section[id] { scroll-margin-top: 88px; }
+  
+  .landing-root a:focus-visible,
+  .landing-root button:focus-visible,
+  .landing-root summary:focus-visible {
+    outline: 2px solid var(--lavender);
+    outline-offset: 3px;
+  }
+  
+  /* ---------- Tipografía ---------- */
+  .landing-serif {
+    font-family: Fraunces, 'Plus Jakarta Sans', serif;
+    font-optical-sizing: auto;
+  }
+  
+  .landing-root h1,
+  .landing-root h2,
+  .landing-root h3 {
+    color: var(--ink);
+    line-height: 1.08;            /* los títulos se veían con interlineado de párrafo */
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  
+  .landing-root h1 { font-size: clamp(2.6rem, 5.5vw, 4.4rem); }
+  .landing-root h2 { font-size: clamp(2rem, 3.6vw, 2.9rem); }
+  
+  .landing-root p {
+    color: var(--muted);
+    line-height: 1.65;
+    text-wrap: pretty;
+  }
+  
+  /* ---------- Superficies claras (POS, cierre de caja, planes) ----------
+     Añade la clase .landing-on-light a toda tarjeta blanca: dentro de ella
+     las variables vuelven a ser "tema claro" y el texto se lee. */
+  .landing-on-light {
+    --ink: #17131f;
+    --text-2: #3d3849;
+    --muted: #5c5868;
+    --line: rgba(17, 17, 17, 0.08);
+    --accent-text: var(--plum);
+    background: #f7f4ff;
+    color: var(--ink);
+  }
+  
+  .landing-on-light h1,
+  .landing-on-light h2,
+  .landing-on-light h3 { color: var(--ink); }
+  .landing-on-light p  { color: var(--muted); }
+  
+  /* ---------- Skip link ---------- */
+  .landing-skip {
+    position: absolute;
+    left: 16px;
+    top: -48px;
+    z-index: 200;
+    background: var(--plum);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .landing-skip:focus { top: 12px; }
+  
+  /* ---------- Navegación ---------- */
+  .landing-nav {
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    transition: background 0.25s, box-shadow 0.25s, border-color 0.25s;
+    border-bottom: 1px solid transparent;
+  }
+  
+  .landing-nav.is-scrolled {
+    background: rgba(17, 17, 17, 0.8);
+    backdrop-filter: blur(16px) saturate(140%);
+    border-bottom-color: var(--line);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  }
+  
+  .landing-nav-link {
+    text-decoration: none;
+    color: var(--text-2);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 10px;
+    transition: color 0.15s, background 0.15s;
+  }
+  .landing-nav-link:hover { color: #fff; background: rgba(167, 136, 244, 0.14); }
+  
+  .landing-wrap {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
+  }
+  
+  /* ---------- Botones ---------- */
+  .landing-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  }
+  .landing-btn:hover  { transform: translateY(-1px); }
+  .landing-btn:active { transform: translateY(0); }
+  
+  .landing-btn-primary {
+    background: linear-gradient(135deg, var(--plum-600), var(--plum));
+    color: #fff;
+    padding: 13px 22px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 10px 28px rgba(91, 31, 168, 0.45);
+  }
+  .landing-btn-primary:hover {
+    background: linear-gradient(135deg, #6a2bc4, var(--plum-600));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      0 14px 34px rgba(106, 43, 196, 0.55);
+  }
+  
+  .landing-btn-ghost {
+    background: rgba(167, 136, 244, 0.06);
+    color: var(--ink);
+    padding: 12px 20px;
+    border: 1px solid rgba(167, 136, 244, 0.28);
+  }
+  .landing-btn-ghost:hover {
+    border-color: var(--lavender);
+    background: rgba(167, 136, 244, 0.12);
+  }
+  
+  .landing-btn-sun {
+    background: var(--sun);
+    color: #111111;
+    padding: 13px 22px;
+    box-shadow: 0 10px 28px rgba(253, 219, 53, 0.22);
+  }
+  .landing-btn-sun:hover { box-shadow: 0 14px 34px rgba(253, 219, 53, 0.34); }
+  
+  /* ---------- Chips de sección ----------
+     Antes: texto plum sobre fondo oscuro (≈1.6:1). Ahora un color por sección. */
+  .landing-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    background: rgba(167, 136, 244, 0.14);
+    border: 1px solid rgba(167, 136, 244, 0.28);
+  }
+  .landing-chip.is-sky   { color: #8fb1ff; background: rgba(95, 143, 255, 0.14);  border-color: rgba(95, 143, 255, 0.3); }
+  .landing-chip.is-sun   { color: var(--sun); background: rgba(253, 219, 53, 0.12); border-color: rgba(253, 219, 53, 0.28); }
+  .landing-chip.is-coral { color: #ff8e8e; background: rgba(255, 107, 107, 0.13); border-color: rgba(255, 107, 107, 0.3); }
+  
+  /* ---------- Layouts ---------- */
+  .landing-hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 56px;
+    align-items: center;
+    padding: 56px 0 28px;
+  }
+  
+  .landing-section { padding: clamp(64px, 9vw, 112px) 0; }
+  
+  .landing-bento {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    grid-auto-flow: dense;
+    gap: 16px;
+  }
+  .landing-bento .span-2 { grid-column: span 2; }
+  /* evita el hueco que quedaba a la derecha de la última fila */
+  .landing-bento > .span-2:last-child { grid-column: 1 / -1; }
+  
+  .landing-steps   { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .landing-pricing { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch; }
+  
+  .landing-split,
+  .landing-faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  .landing-faq-grid { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 40px; }
+  
+  .landing-pos-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 12px; }
+  
+  /* ---------- Tarjetas con borde de luz y animación fluida al pasar el cursor ---------- */
+  .landing-card {
+    position: relative;
+    background:
+      linear-gradient(180deg, rgba(167, 136, 244, 0.07), rgba(25, 23, 30, 0.85) 45%);
+    border: 1px solid transparent;
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease;
+    will-change: transform, box-shadow;
+  }
+  
+  .landing-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 48px -15px rgba(106, 43, 196, 0.45), 0 0 0 1px rgba(167, 136, 244, 0.3);
+  }
+  
+  .landing-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(160deg, rgba(167, 136, 244, 0.5), rgba(167, 136, 244, 0.06) 42%, rgba(95, 143, 255, 0.22));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    pointer-events: none;
+    transition: background 0.35s ease;
+  }
+
+  .landing-card:hover::before {
+    background: linear-gradient(160deg, rgba(167, 136, 244, 0.85), rgba(253, 219, 53, 0.4) 42%, rgba(95, 143, 255, 0.45));
+  }
+  
+  .landing-bento .landing-card:hover {
+    transform: translateY(-8px) scale(1.012);
+    box-shadow: 0 26px 55px -18px rgba(106, 43, 196, 0.65), 0 0 0 1px rgba(167, 136, 244, 0.35);
+  }
+
+  .landing-steps article {
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease;
+    will-change: transform, box-shadow;
+  }
+
+  .landing-steps article:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 22px 50px -15px rgba(167, 136, 244, 0.4);
+    border-color: rgba(167, 136, 244, 0.45) !important;
+  }
+  
+  .landing-card.landing-on-light { background: #f7f4ff; backdrop-filter: none; }
+  .landing-card.landing-on-light::before { background: rgba(17, 17, 17, 0.06); }
+  
+  /* Icono de cada módulo del bento */
+  .landing-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: rgba(167, 136, 244, 0.16);
+    color: var(--lavender);
+  }
+  .landing-icon.is-sky   { background: rgba(95, 143, 255, 0.16);  color: #8fb1ff; }
+  .landing-icon.is-coral { background: rgba(255, 107, 107, 0.16); color: #ff8e8e; }
+  .landing-icon.is-sun   { background: rgba(253, 219, 53, 0.14);  color: var(--sun); }
+  
+  /* ---------- Banda de métricas ---------- */
+  .landing-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: rgba(25, 23, 30, 0.6);
+  }
+  .landing-stat { padding: 26px 30px; }
+  .landing-stat + .landing-stat { border-left: 1px solid var(--line); }
+  .landing-stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .landing-stat-value {
+    font-family: Fraunces, serif;
+    font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+    font-weight: 700;
+    background: linear-gradient(120deg, var(--lavender), var(--sky));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  /* ---------- Identidad: ticket y cuaderno ---------- */
+  /* Borde inferior en dientes de sierra, como un ticket de caja */
+  .landing-ticket {
+    -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 16px 100%;
+    mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 16px 100%;
+    padding-bottom: 14px;
+  }
+  
+  /* Renglones de cuaderno de ventas (ideal para el bloque CTA) */
+  .landing-ledger {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0 31px,
+      rgba(255, 255, 255, 0.07) 31px 32px
+    );
+  }
+  
+  /* ---------- Planes (Movimiento y Efecto Hover en Tarjetas) ---------- */
+  .landing-plan-card {
+    transition: transform 0.38s cubic-bezier(0.18, 0.89, 0.32, 1.28), box-shadow 0.35s ease, border-color 0.3s ease;
+    will-change: transform, box-shadow;
+    cursor: pointer;
+  }
+
+  /* Tarjetas normales (Básico y Empresarial) */
+  .landing-plan-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 28px 65px -15px rgba(74, 20, 140, 0.28), 0 0 0 2px rgba(167, 136, 244, 0.35) !important;
+  }
+
+  /* Tarjeta destacada (Profesional) */
+  .landing-plan-card.landing-plan-card-featured {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px -15px rgba(74, 20, 140, 0.5);
+  }
+
+  .landing-plan-card.landing-plan-card-featured:hover {
+    transform: translateY(-20px) scale(1.035);
+    box-shadow: 0 38px 85px -15px rgba(106, 43, 196, 0.75), 0 0 0 2px #fddb35 !important;
+  }
+
+  /* Badge "Recomendado" animación al hover de la tarjeta */
+  .landing-plan-badge {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  }
+
+  .landing-plan-card:hover .landing-plan-badge {
+    transform: scale(1.08) translateY(-3px);
+    box-shadow: 0 8px 18px rgba(253, 219, 53, 0.45);
+  }
+
+  /* Efecto en el botón de la tarjeta al pasar el cursor */
+  .landing-plan-btn {
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, filter 0.25s ease;
+  }
+
+  .landing-plan-card:hover .landing-plan-btn {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+    filter: brightness(1.05);
+  }
+
+  .landing-plan-card:hover .landing-plan-btn:hover {
+    transform: translateY(-4px) scale(1.02);
+    filter: brightness(1.12);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.38);
+  }
+
+  .landing-featured {
+    background: linear-gradient(160deg, #6a2bc4 0%, var(--plum) 55%, #3a0f70 100%);
+    color: #fff;
+    box-shadow:
+      0 0 0 1px rgba(167, 136, 244, 0.4),
+      0 34px 80px -24px rgba(106, 43, 196, 0.7);
+    transform: translateY(-8px);
+  }
+  .landing-featured p { color: rgba(255, 255, 255, 0.82); }
+  
+  /* ---------- FAQ ---------- */
+  .landing-faq-item {
+    border-bottom: 1px solid var(--line);
+    padding: 18px 0;
+  }
+  .landing-faq-item summary {
+    cursor: pointer;
+    list-style: none;
+    color: var(--ink);
+    transition: color 0.15s;
+  }
+  .landing-faq-item summary:hover { color: var(--lavender); }
+  .landing-faq-item summary::-webkit-details-marker { display: none; }
+  .landing-faq-item[open] summary span.chevron { transform: rotate(180deg); }
+  .landing-faq-item summary span.chevron { transition: transform 0.2s ease; }
+  
+  /* ---------- CTA final (estilo landing-card, versión celeste / sky) ---------- */
+.landing-cta {
+  border-radius: 20px;
+  color: var(--ink);
+  box-shadow: 0 24px 60px -24px rgba(95, 143, 255, 0.45);
+}
+.landing-cta p { color: var(--muted); }
+
+/* variante celeste (sky) de la tarjeta con borde degradado celeste */
+.landing-card.is-sky {
+  background: linear-gradient(180deg, rgba(95, 143, 255, 0.12), rgba(25, 23, 30, 0.88) 45%);
+}
+.landing-card.is-sky::before {
+  background: linear-gradient(160deg, rgba(95, 143, 255, 0.85), rgba(95, 143, 255, 0.12) 42%, rgba(143, 177, 255, 0.4));
+}
+.landing-card.is-sky:hover::before {
+  background: linear-gradient(160deg, rgba(143, 177, 255, 1), rgba(95, 143, 255, 0.4) 42%, rgba(95, 143, 255, 0.7));
+}
+.landing-card.is-sky:hover {
+  box-shadow: 0 30px 75px -20px rgba(95, 143, 255, 0.6) !important;
+}
+
+
+  
+  /* ---------- Footer ---------- */
+  .landing-footer p,
+  .landing-footer a { color: var(--muted); text-decoration: none; font-size: 13px; }
+  .landing-footer a:hover { color: #fff; }
+  .landing-footer a.is-accent { color: var(--lavender); font-weight: 700; }
+  
+  .landing-mobile-panel { display: none; }
+  
+  /* ---------- Responsive ---------- */
+  @media (max-width: 980px) {
+    .landing-hero-grid,
+    .landing-bento,
+    .landing-steps,
+    .landing-pricing,
+    .landing-split,
+    .landing-faq-grid,
+    .landing-pos-grid { grid-template-columns: 1fr; }
+  
+    .landing-bento .span-2,
+    .landing-bento > .span-2:last-child { grid-column: span 1; }
+  
+    .landing-stats { grid-template-columns: 1fr 1fr; }
+    .landing-stat + .landing-stat { border-left: none; }
+    .landing-stat:nth-child(n + 3) { border-top: 1px solid var(--line); }
+  
+    .landing-featured { transform: none; }
+    .landing-float-chip { position: static !important; margin-top: 12px; }
+    .landing-desktop-nav { display: none !important; }
+    .landing-menu-btn { display: inline-flex !important; }
+  }
+  
+  @media (max-width: 640px) {
+    .landing-wrap { width: min(1180px, calc(100% - 28px)); }
+    .landing-stats { grid-template-columns: 1fr; }
+    .landing-stat:nth-child(n + 2) { border-top: 1px solid var(--line); }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .landing-root *,
+    .landing-root *::before,
+    .landing-root *::after {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+
+  /* Checkout: el formulario y su resumen se apilan antes de comprimir las tarjetas. */
+  .checkout-main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(300px, 0.9fr);
+    gap: 32px;
+    align-items: start;
+  }
+  .checkout-plan-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  @media (max-width: 1100px) {
+    .checkout-main-grid { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  @media (max-width: 980px) {
+    .landing-pricing { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .landing-plan-card-featured,
+    .landing-plan-card-featured:hover { transform: none; }
+  }
+
+  @media (max-width: 680px) {
+    .landing-pricing { grid-template-columns: minmax(0, 1fr); }
+    .checkout-plan-grid { grid-template-columns: minmax(0, 1fr); }
+  }
+  
+  /* ==========================================================
+     PARCHE DE CONTRASTE (temporal, sin tocar el JSX)
+     Corrige texto claro sobre superficies claras y texto plum/gris/negro
+     sobre fondo oscuro, detectando los estilos en línea del componente.
+     Cuando el JSX use var(--ink), var(--muted) y var(--accent-text),
+     esta sección se puede borrar.
+     ========================================================== */
+  
+  /* 1) Superficies blancas: dentro de ellas, todo vuelve a "tema claro" */
+  .landing-root [style*="background: rgb(255, 255, 255)"],
+  .landing-root [style*="background-color: rgb(255, 255, 255)"],
+  .landing-root [style*="background: #fff"],
+  .landing-root [style*="background: white"] {
+    --ink: #17131f;
+    --text-2: #3d3849;
+    --muted: #5c5868;
+    --accent-text: var(--plum);
+    color: #17131f;
+  }
+  
+  /* 2) Superficies amarillas: el texto principal es oscuro */
+  .landing-root [style*="background: rgb(253, 219, 53)"],
+  .landing-root [style*="background: var(--sun)"],
+  .landing-root [style*="background-color: var(--sun)"] {
+    --ink: #111111;
+    --muted: #3d3849;
+  }
+  
+  /* 3) Grises apagados → --muted (claro en oscuro, oscuro en tarjetas blancas) */
+  .landing-root [style*="color: rgb(92, 88, 104)"],
+  .landing-root [style*="color: #5c5868"],
+  .landing-root [style*="color: var(--muted)"] {
+    color: var(--muted) !important;
+  }
+  
+  /* 4) Plum usado como texto → --accent-text (lavender en oscuro, plum en blanco) */
+  .landing-root [style*="color: rgb(74, 20, 140)"],
+  .landing-root [style*="color: #4a148c"],
+  .landing-root [style*="color: var(--plum)"] {
+    color: var(--accent-text) !important;
+  }
+  
+  /* 5) Negro / --paper usado como texto → --ink (ej. "opcional") */
+  .landing-root [style*="color: rgb(17, 17, 17)"],
+  .landing-root [style*="color: #111"],
+  .landing-root [style*="color: var(--paper)"] {
+    color: var(--ink) !important;
+  }
+  
+  /* ==========================================================
+     Botón del CTA final: Celeste de la paleta (--sky)
+     ========================================================== */
+  .landing-btn-sky,
+  .landing-cta .landing-btn-sky,
+  .landing-cta .landing-btn-sun,
+  .landing-btn-light {
+    --btn-bg: var(--sky);
+    --btn-bg-hover: #4a7ef5;
+    --btn-fg: #ffffff;
+  
+    background: linear-gradient(135deg, #6ea0ff 0%, #5f8fff 100%) !important;
+    color: #ffffff !important;
+    padding: 14px 28px;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 12px;
+    white-space: nowrap;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      0 12px 30px rgba(95, 143, 255, 0.45) !important;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease, filter 0.2s ease;
+  }
+  
+  .landing-btn-sky:hover,
+  .landing-cta .landing-btn-sky:hover,
+  .landing-cta .landing-btn-sun:hover,
+  .landing-btn-light:hover {
+    background: linear-gradient(135deg, #81afff 0%, #4a7ef5 100%) !important;
+    color: #ffffff !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      0 16px 38px rgba(95, 143, 255, 0.6) !important;
+    transform: translateY(-2px);
+  }
+
+  /* CTA container: asegurar que el botón quede a un lado */
+  .landing-cta {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 32px !important;
+  }
+
+  @media (max-width: 768px) {
+    .landing-cta {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 20px !important;
+    }
+  }
