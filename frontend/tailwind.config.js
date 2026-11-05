@@ -1,0 +1,57 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "primary": "#1E3A8A",
+        "primary-dark": "#172554",
+        "primary-container": "#003a91",
+        "primary-fixed": "#dce1ff",
+        "primary-fixed-dim": "#b6c4ff",
+        "secondary": "#694bb2",
+        "secondary-light": "#A788F4",
+        "secondary-container": "#b091fe",
+        "secondary-fixed": "#e9ddff",
+        "celeste": "#5F8FFF",
+        "coral": "#FF6B6B",
+        "amarillo": "#FDD835",
+        "background": "#F8F9FF",
+        "surface": "#F8F9FF",
+        "surface-container-lowest": "#ffffff",
+        "surface-container-low": "#eff4ff",
+        "surface-container": "#e5eeff",
+        "surface-container-high": "#dce9ff",
+        "surface-variant": "#d3e4fe",
+        "on-surface": "#0b1c30",
+        "on-surface-variant": "#444651",
+        "on-primary": "#ffffff",
+        "on-secondary": "#ffffff",
+        "outline": "#757682",
+        "outline-variant": "#c5c5d3",
+        "error": "#ba1a1a",
+      },
+      fontFamily: {
+        sans: ["Plus Jakarta Sans", "sans-serif"],
+        body: ["Plus Jakarta Sans", "sans-serif"],
+        headline: ["Plus Jakarta Sans", "sans-serif"],
+        inter: ["Inter", "sans-serif"],
+        label: ["Inter", "sans-serif"],
+        numeric: ["Inter", "sans-serif"],
+      },
+      borderRadius: {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "2xl": "1rem",
+        "3xl": "1.5rem",
+        "full": "9999px",
+      }
+    },
+  },
+  plugins: [],
+}

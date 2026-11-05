@@ -1,0 +1,14 @@
+node_modules/
+dist/
+dev-dist/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.idea/
+.agents/
+.claude/
+.cursor/
+.devin/
+coverage/
